@@ -121,7 +121,7 @@ function ShoppingCheckout() {
             <Button onClick={handleInitiatePaypalPayment} className="w-full">
               {isPaymentStart
                 ? "Processing Paypal Payment..."
-                : "Checkout with Paypal"}
+                : "Checkout with VnPay"}
             </Button>
           </div>
         </div>
