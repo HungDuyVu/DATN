@@ -50,15 +50,16 @@ function MenuItems() {
   }
 
   return (
-    <nav className="flex flex-col mb-3 lg:mb-0 lg:items-center gap-6 lg:flex-row">
+    <nav className="flex flex-col mb-3 lg:mb-0 lg:items-center gap-6 lg:flex-row ">
       {shoppingViewHeaderMenuItems.map((menuItem) => (
-        <Label
+        <Button
           onClick={() => handleNavigate(menuItem)}
-          className="text-sm font-medium cursor-pointer"
+          className="font-dancing text-xl cursor-pointer p-2"
           key={menuItem.id}
+          variant={"primary"}
         >
           {menuItem.label}
-        </Label>
+        </Button>
       ))}
     </nav>
   );
@@ -86,11 +87,11 @@ function HeaderRightContent() {
       <Sheet open={openCartSheet} onOpenChange={() => setOpenCartSheet(false)}>
         <Button
           onClick={() => setOpenCartSheet(true)}
-          variant="outline"
+          variant="primary_2"
           size="icon"
           className="relative"
         >
-          <ShoppingCart className="w-6 h-6" />
+          <ShoppingCart className="w-6 h-6 rounded-full" />
           <span className="absolute top-[-5px] right-[2px] font-bold text-sm">
             {cartItems?.items?.length || 0}
           </span>
@@ -108,17 +109,17 @@ function HeaderRightContent() {
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Avatar className="bg-black">
-            <AvatarFallback className="bg-black text-white font-extrabold">
+          <Avatar className="bg-pink">
+            <AvatarFallback className="bg-pink text-black font-extrabold">
               {user?.userName[0].toUpperCase()}
             </AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
-        <DropdownMenuContent side="right" className="w-56">
+        <DropdownMenuContent side="right" className="w-56 bg-pink">
           <DropdownMenuLabel>Logged in as {user?.userName}</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => navigate("/shop/account")}>
-            <UserCog className="mr-2 h-4 w-4" />
+          <DropdownMenuItem onClick={() => navigate("/shop/account")} className="hover:bg-red">
+            <UserCog className="mr-2 h-4 w-4 " />
             Account
           </DropdownMenuItem>
           <DropdownMenuSeparator />
@@ -136,11 +137,11 @@ function ShoppingHeader() {
   const { isAuthenticated } = useSelector((state) => state.auth);
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-background">
+    <header className=" top-0 z-40 w-full border-b bg-red text-white">
       <div className="flex h-16 items-center justify-between px-4 md:px-6">
         <Link to="/shop/home" className="flex items-center gap-2">
-          <HousePlug className="h-6 w-6" />
-          <span className="font-bold">Ecommerce</span>
+          <HousePlug className="h-8 w-8" />
+          <span className="font-dancing text-3xl text-white">HPL</span>
         </Link>
         <Sheet>
           <SheetTrigger asChild>

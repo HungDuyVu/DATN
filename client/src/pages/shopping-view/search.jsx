@@ -2,6 +2,7 @@ import ProductDetailsDialog from "@/components/shopping-view/product-details";
 import ShoppingProductTile from "@/components/shopping-view/product-tile";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
+import { logInteraction } from "@/store/recommened-sys/interaction-slice";
 import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
 import { fetchProductDetails } from "@/store/shop/products-slice";
 import {
@@ -35,6 +36,17 @@ function SearchProducts() {
       dispatch(resetSearchResults());
     }
   }, [keyword]);
+
+  useEffect(() => {
+    if (searchResults.length > 0) {
+      console.log("search results: ", searchResults);
+
+      searchResults.forEach(product => {
+        dispatch(logInteraction({ userId: user.id, productId: product._id, action: "view" }));
+      })
+
+    }
+  }, [searchResults]);
 
   function handleAddtoCart(getCurrentProductId, getTotalStock) {
     console.log(cartItems);
@@ -71,11 +83,13 @@ function SearchProducts() {
         });
       }
     });
+    dispatch(logInteraction({ userId: user.id, productId: getCurrentProductId, action: "add_to_cart" }));
   }
 
   function handleGetProductDetails(getCurrentProductId) {
     console.log(getCurrentProductId);
     dispatch(fetchProductDetails(getCurrentProductId));
+    dispatch(logInteraction({ userId: user.id, productId: getCurrentProductId, action: "click" }));
   }
 
   useEffect(() => {

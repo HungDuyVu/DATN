@@ -30,6 +30,7 @@ import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
 import { useToast } from "@/components/ui/use-toast";
 import ProductDetailsDialog from "@/components/shopping-view/product-details";
 import { getFeatureImages } from "@/store/common-slice";
+import { logInteraction } from "@/store/recommened-sys/interaction-slice";
 
 const categoriesWithIcon = [
   { id: "men", label: "Men", icon: ShirtIcon },
@@ -74,9 +75,13 @@ function ShoppingHome() {
 
   function handleGetProductDetails(getCurrentProductId) {
     dispatch(fetchProductDetails(getCurrentProductId));
+    dispatch(logInteraction({ userId: user.id, productId: getCurrentProductId, action: "click" }))
+    console.log("interaction");
+
   }
 
   function handleAddtoCart(getCurrentProductId) {
+
     dispatch(
       addToCart({
         userId: user?.id,
@@ -91,6 +96,7 @@ function ShoppingHome() {
         });
       }
     });
+    dispatch(logInteraction({ userId: user.id, productId: getCurrentProductId, action: "add_to_cart" }))
   }
 
   useEffect(() => {
@@ -125,14 +131,13 @@ function ShoppingHome() {
       <div className="relative w-full h-[600px] overflow-hidden">
         {featureImageList && featureImageList.length > 0
           ? featureImageList.map((slide, index) => (
-              <img
-                src={slide?.image}
-                key={index}
-                className={`${
-                  index === currentSlide ? "opacity-100" : "opacity-0"
+            <img
+              src={slide?.image}
+              key={index}
+              className={`${index === currentSlide ? "opacity-100" : "opacity-0"
                 } absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-1000`}
-              />
-            ))
+            />
+          ))
           : null}
         <Button
           variant="outline"
@@ -211,12 +216,12 @@ function ShoppingHome() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {productList && productList.length > 0
               ? productList.map((productItem) => (
-                  <ShoppingProductTile
-                    handleGetProductDetails={handleGetProductDetails}
-                    product={productItem}
-                    handleAddtoCart={handleAddtoCart}
-                  />
-                ))
+                <ShoppingProductTile
+                  handleGetProductDetails={handleGetProductDetails}
+                  product={productItem}
+                  handleAddtoCart={handleAddtoCart}
+                />
+              ))
               : null}
           </div>
         </div>

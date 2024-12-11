@@ -34,15 +34,15 @@ function AuthLogin() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-md space-y-6">
+    <div className="mx-auto w-full max-w-md space-y-8 border-red p-12 rounded-sm">
       <div className="text-center">
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">
+        <h1 className="text-3xl font-bold tracking-tight text-red">
           Sign in to your account
         </h1>
         <p className="mt-2">
           Don't have an account
           <Link
-            className="font-medium ml-2 text-primary hover:underline"
+            className="font-medium ml-2 text-red hover:underline"
             to="/auth/register"
           >
             Register
@@ -55,6 +55,7 @@ function AuthLogin() {
         formData={formData}
         setFormData={setFormData}
         onSubmit={onSubmit}
+        variant={"primary"}
       />
     </div>
   );

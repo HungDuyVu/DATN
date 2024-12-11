@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/components/ui/use-toast";
 import { sortOptions } from "@/config";
+import { logInteraction } from "@/store/recommened-sys/interaction-slice";
 import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
 import {
   fetchAllFilteredProducts,
@@ -81,6 +82,7 @@ function ShoppingListing() {
   function handleGetProductDetails(getCurrentProductId) {
     console.log(getCurrentProductId);
     dispatch(fetchProductDetails(getCurrentProductId));
+    dispatch(logInteraction({ userId: user.id, productId: getCurrentProductId, action: "click" }))
   }
 
   function handleAddtoCart(getCurrentProductId, getTotalStock) {
@@ -133,11 +135,23 @@ function ShoppingListing() {
   }, [filters]);
 
   useEffect(() => {
-    if (filters !== null && sort !== null)
+    if (filters !== null && sort !== null) {
       dispatch(
         fetchAllFilteredProducts({ filterParams: filters, sortParams: sort })
-      );
+      ).then((data) => {
+        console.log("products filter: ", data?.payload?.data);
+        productList.forEach((product) => {
+          dispatch(logInteraction({ userId: user.id, productId: product._id, action: "view" }))
+        })
+
+      }).catch((error) => {
+        console.error("Lỗi xảy ra khi fetch dữ liệu:", error);
+      });
+    }
   }, [dispatch, sort, filters]);
+
+
+
 
   useEffect(() => {
     if (productDetails !== null) setOpenDetailsDialog(true);
@@ -184,12 +198,12 @@ function ShoppingListing() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
           {productList && productList.length > 0
             ? productList.map((productItem) => (
-                <ShoppingProductTile
-                  handleGetProductDetails={handleGetProductDetails}
-                  product={productItem}
-                  handleAddtoCart={handleAddtoCart}
-                />
-              ))
+              <ShoppingProductTile
+                handleGetProductDetails={handleGetProductDetails}
+                product={productItem}
+                handleAddtoCart={handleAddtoCart}
+              />
+            ))
             : null}
         </div>
       </div>

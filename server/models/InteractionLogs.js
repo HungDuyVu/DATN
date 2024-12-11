@@ -12,18 +12,23 @@ const InteractionLogSchema = new mongoose.Schema(
       ref: "Product",
       required: true,
     },
-    actionType: {
-      type: String,
-      enum: ["view", "click", "add_to_cart", "purchase"],
-      required: true,
-    },
-    timestamp: {
-      type: Date,
-      default: Date.now,
-    },
-    additionalInfo: {
-      type: Object,
-      default: null,
+    actions: {
+      view: {
+        count: { type: Number, default: 0 },
+        time: { type: Date, default: null },
+      },
+      click: {
+        count: { type: Number, default: 0 },
+        time: { type: Date, default: null },
+      },
+      add_to_cart: {
+        count: { type: Number, default: 0 },
+        time: { type: Date, default: null },
+      },
+      purchase: {
+        count: { type: Number, default: 0 },
+        time: { type: Date, default: null },
+      },
     },
   },
   { timestamps: true }

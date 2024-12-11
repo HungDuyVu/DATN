@@ -4,12 +4,11 @@ import axios from "axios";
 const initialState = {
   isAuthenticated: false,
   isLoading: true,
-  user: null,
+  user: JSON.parse(localStorage.getItem("user")) || null, // Phục hồi dữ liệu từ localStorage
 };
 
 export const registerUser = createAsyncThunk(
   "/auth/register",
-
   async (formData) => {
     const response = await axios.post(
       "http://localhost:5000/api/auth/register",
@@ -19,13 +18,13 @@ export const registerUser = createAsyncThunk(
       }
     );
 
+    localStorage.setItem("user", JSON.stringify(response.data.user)); // Lưu dữ liệu vào localStorage
     return response.data;
   }
 );
 
 export const loginUser = createAsyncThunk(
   "/auth/login",
-
   async (formData) => {
     const response = await axios.post(
       "http://localhost:5000/api/auth/login",
@@ -35,13 +34,13 @@ export const loginUser = createAsyncThunk(
       }
     );
 
+    localStorage.setItem("user", JSON.stringify(response.data.user)); // Lưu dữ liệu vào localStorage
     return response.data;
   }
 );
 
 export const logoutUser = createAsyncThunk(
   "/auth/logout",
-
   async () => {
     const response = await axios.post(
       "http://localhost:5000/api/auth/logout",
@@ -51,38 +50,33 @@ export const logoutUser = createAsyncThunk(
       }
     );
 
+    localStorage.removeItem("user"); // Xóa dữ liệu từ localStorage khi người dùng đăng xuất
     return response.data;
   }
 );
 
 export const checkAuth = createAsyncThunk("checkAuth", async () => {
   try {
-    // Cấu hình request với các header cần thiết
     const axiosConfig = {
-      withCredentials: true, // Đảm bảo gửi kèm cookie
+      withCredentials: true,
       headers: {
         "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
       },
     };
 
-    // Gửi yêu cầu GET để kiểm tra xác thực người dùng
     const { data: response } = await axios.get(
       "http://localhost:5000/api/auth/check-auth",
       axiosConfig
     );
 
-    console.log("Check auth response:", response);
-
-    // Trả về kết quả thành công
+    localStorage.setItem("user", JSON.stringify(response.user)); // Lưu dữ liệu vào localStorage
     return {
       data: response,
       successMsg: "User is authenticated",
       error: null,
     };
   } catch (error) {
-    console.error("Error checking auth:", error);
-
-    // Trả về kết quả lỗi
+    localStorage.removeItem("user"); // Xóa dữ liệu từ localStorage khi có lỗi
     return {
       data: null,
       successMsg: null,
@@ -95,7 +89,9 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    setUser: (state, action) => {},
+    setUser: (state, action) => {
+      state.user = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -116,8 +112,6 @@ const authSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
-        console.log(action);
-
         state.isLoading = false;
         state.user = action.payload.success ? action.payload.user : null;
         state.isAuthenticated = action.payload.success;
